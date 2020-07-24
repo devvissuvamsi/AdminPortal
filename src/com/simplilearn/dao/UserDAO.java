@@ -43,6 +43,7 @@ public class UserDAO {
 			userlocal.setUserPass(result.getString(3));
 			userlocal.setUserEmail(result.getString(4));
 		}
+		this.conn.close();
 		return userlocal;
 	}	
 	
