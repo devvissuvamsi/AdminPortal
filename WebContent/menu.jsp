@@ -21,7 +21,7 @@
 						Users</a></li>
 				<li class="nav-item"><a class="nav-link" href="#">Manage
 						Customers</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">About</a></li>
+				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/about">About</a></li>
 			</ul>
 			<form class="form-inline my-2 my-lg-0" action="logout" method="post">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit"

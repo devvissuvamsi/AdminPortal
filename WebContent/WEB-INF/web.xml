@@ -29,7 +29,11 @@
     <servlet-name>DefaultServlet</servlet-name>
     <url-pattern>/home</url-pattern>
   </servlet-mapping>  
-  
+  <servlet-mapping>
+    <servlet-name>DefaultServlet</servlet-name>
+    <url-pattern>/about</url-pattern>
+  </servlet-mapping>  
+    
   <servlet>
     <description></description>
     <display-name>LogoutServlet</display-name>

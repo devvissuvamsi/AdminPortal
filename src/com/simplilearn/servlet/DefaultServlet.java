@@ -51,6 +51,9 @@ public class DefaultServlet extends HttpServlet {
 			case "/login":
 				login(request,response);
 				break;
+			case "/logout":
+				logout(request,response);
+				break;
 			case "/user":
 				user(request,response);
 				break;
@@ -67,6 +70,26 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 
+
+	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		PrintWriter writer = response.getWriter();
+		HttpSession session = request.getSession(true);
+		if(session!=null) {
+//			remove session 
+			session.removeAttribute("username");
+			session.invalidate();
+			request.getRequestDispatcher("login.html").include(request, response);
+			writer.println("<div class=\"row\">\r\n" + 
+					"    <div class=\"col-lg-3 col-md-2\"></div>\r\n" + 
+					"    <div class=\"alert alert-success\" role=\"alert\">\r\n" + 
+					"		Logout Success\r\n" + 
+					"	</div>\r\n" + 
+					"</div>");
+		}
+		else {
+			writer.println("Session doesn't exists");
+		}		
+	}
 
 	private void login(HttpServletRequest request, HttpServletResponse response) throws IOException, SQLException, ServletException {
 		PrintWriter writer = response.getWriter();
@@ -96,9 +119,17 @@ public class DefaultServlet extends HttpServlet {
 	private void user(HttpServletRequest request, HttpServletResponse response) {
 	}
 
-	private void about(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
+	private void about(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// It will look for existing session variables by passing true as argument
+		HttpSession session = request.getSession(true);
 		
+		if(session!=null) {
+			RequestDispatcher rd = request.getRequestDispatcher("about.jsp");
+			rd.include(request, response);
+		}
+		else {
+			request.getRequestDispatcher("logout").include(request, response);
+		}		
 	}
 
 	private void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

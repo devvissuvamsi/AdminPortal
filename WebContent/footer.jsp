@@ -1,7 +1,7 @@
 <footer class="footer mt-auto py-3">
 	<div class="container">
 		Admin Portal Footer goes here - <span class="text-muted"><span class="px-1">.</span><a
-			href="/home.jsp">Home</a></span>
+			href="<%=request.getContextPath()%>/home">Home</a></span>
 	</div>
 </footer>
 <!-- JS, Popper.js, and jQuery -->
