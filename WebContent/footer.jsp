@@ -1,9 +1,9 @@
-<footer class="footer mt-auto py-3">
-	<div class="container">
-		Admin Portal Footer goes here - <span class="text-muted"><span class="px-1">.</span><a
-			href="<%=request.getContextPath()%>/home">Home</a></span>
-	</div>
-</footer>
+<footer class="footer">
+      <div class="container">
+        <span class="text-muted">sticky footer content....</span>
+      </div>
+    </footer>
+<!-- Footer -->
 <!-- JS, Popper.js, and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script

@@ -3,6 +3,7 @@ package com.simplilearn.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,6 +35,9 @@ public class DefaultServlet extends HttpServlet {
 			case "/about":
 				about(request,response);
 				break;
+			case "/user.index":
+				userIndex(request,response);
+				break;
 			default :
 				home(request,response);
 				break;
@@ -44,6 +48,15 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 	
+
+
+	private void userIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+		List<User> userList = userDAO.selectAllUser();
+		request.setAttribute("listUser", userList);
+		RequestDispatcher rd = request.getRequestDispatcher("userindex.jsp");
+		rd.forward(request, response);
+	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action = request.getServletPath();
 		try{
@@ -54,11 +67,8 @@ public class DefaultServlet extends HttpServlet {
 			case "/logout":
 				logout(request,response);
 				break;
-			case "/user":
-				user(request,response);
-				break;
-			case "/customer":
-				customer(request,response);
+			case "/customer.index":
+				customerIndex(request,response);
 				break;
 			default :
 				home(request,response);
@@ -71,18 +81,30 @@ public class DefaultServlet extends HttpServlet {
 	}
 
 
+	private void customerIndex(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		PrintWriter writer = response.getWriter();
 		HttpSession session = request.getSession(true);
+		String logoutMessage = "Logout Success";
+		
 		if(session!=null) {
 //			remove session 
 			session.removeAttribute("username");
 			session.invalidate();
+			
+	        // if not contains logout then it must be due to session expire
+	        if (!request.getParameterMap().containsKey("logout")) {
+	        	logoutMessage = "Session Expired ! Please login again";
+	        }			
 			request.getRequestDispatcher("login.html").include(request, response);
 			writer.println("<div class=\"row\">\r\n" + 
 					"    <div class=\"col-lg-3 col-md-2\"></div>\r\n" + 
 					"    <div class=\"alert alert-success\" role=\"alert\">\r\n" + 
-					"		Logout Success\r\n" + 
+					"		" + logoutMessage + "\r\n" + 
 					"	</div>\r\n" + 
 					"</div>");
 		}
@@ -116,9 +138,6 @@ public class DefaultServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 	}
 
-	private void user(HttpServletRequest request, HttpServletResponse response) {
-	}
-
 	private void about(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// It will look for existing session variables by passing true as argument
 		HttpSession session = request.getSession(true);
@@ -128,6 +147,7 @@ public class DefaultServlet extends HttpServlet {
 			rd.include(request, response);
 		}
 		else {
+			request.setAttribute("sessionExpired", true);
 			request.getRequestDispatcher("logout").include(request, response);
 		}		
 	}

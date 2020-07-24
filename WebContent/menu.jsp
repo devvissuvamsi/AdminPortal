@@ -1,9 +1,31 @@
+<%
+//allow access only if session exists
+String user = null;
+if(session.getAttribute("username") == null){
+	response.sendRedirect("login.html");
+}else user = (String) session.getAttribute("username");
+
+
+String userName = null;
+String sessionID = null;
+
+Cookie[] cookies = request.getCookies();
+if(cookies !=null){
+	for(Cookie cookie : cookies){
+		if(cookie.getName().equals("user")) userName = cookie.getValue();
+		if(cookie.getName().equals("JSESSIONID")) sessionID = cookie.getValue();
+	}
+
+}else{
+	sessionID = session.getId();
+}
+%>
 <div class="container">
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
 		<a class="navbar-brand" href="<%=request.getContextPath()%>/home"> 
 		<%
- 			String name = request.getParameter("username");
- 			out.print("Welcome " + name);
+// 			out.print("Welcome " + user + ", SessionID: " + sessionID);
+ 			out.print("Welcome " + user);
  		%></a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarSupportedContent"
@@ -17,13 +39,13 @@
 				<li class="nav-item active"><a class="nav-link" href="<%=request.getContextPath()%>/home">Home
 						<span class="sr-only">(current)</span>
 				</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Manage
-						Users</a></li>
-				<li class="nav-item"><a class="nav-link" href="#">Manage
-						Customers</a></li>
+				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/user.index">Manage
+						User</a></li>
+				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/customer.index">Manage
+						Customer</a></li>
 				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/about">About</a></li>
 			</ul>
-			<form class="form-inline my-2 my-lg-0" action="logout" method="post">
+			<form class="form-inline my-2 my-lg-0" action="logout" name="logout" method="post">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit"
 					value="logout">Logout</button>
 			</form>
