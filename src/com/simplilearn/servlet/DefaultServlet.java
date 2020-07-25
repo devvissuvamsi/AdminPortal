@@ -43,6 +43,10 @@ public class DefaultServlet extends HttpServlet {
 			case "/customer.create":
 				userCreate(request,response);
 				break;
+			case "/user.edit":
+			case "/customer.edit":
+				userEdit(request,response);
+				break;						
 			case "/user.delete":
 			case "/customer.delete":
 				userDelete(request,response);
@@ -78,10 +82,6 @@ public class DefaultServlet extends HttpServlet {
 			case "/customer.create":
 				userCreate(request,response);
 				break;
-			case "/user.edit":
-			case "/customer.edit":
-				userEdit(request,response);
-				break;					
 			case "/user.delete":
 			case "/customer.delete":
 				userDelete(request,response);
@@ -118,9 +118,39 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 
-	private void userEdit(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
+	private void userEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+		boolean isCustomer = false;
+		String roleKey = "user";
+		if(request.getServletPath().contains("customer")) {
+			isCustomer = true;
+			roleKey="customer";
+		}
 		
+		if(checkSession(request,response)) {
+			if(request.getParameter("submit")!= null) {
+				int id = Integer.parseInt(request.getParameter("id"));
+				String name = request.getParameter("name");
+				String email = request.getParameter("email");
+				User modifiedUser = new User(id,name,email);
+				if(userDAO.updateUser(modifiedUser)) {
+					if(isCustomer) {
+						response.sendRedirect("customer.index");
+					}else {
+						response.sendRedirect("user.index");
+					}				
+				}
+				else {
+					System.out.println("Some Errors...");
+				}
+			}
+			else {
+				int id = Integer.parseInt(request.getParameter("id"));
+				User existingUser = userDAO.findUserById(id);
+				request.setAttribute("user", existingUser);
+				RequestDispatcher rd = request.getRequestDispatcher("useredit.jsp");
+				rd.forward(request, response);
+			}
+		}
 	}
 
 	private void userCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
@@ -174,15 +204,6 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 	
-	private void customerIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-		if(checkSession(request,response)) {
-			List<User> userList = userDAO.selectAllUser();
-			request.setAttribute("listUser", userList);
-			RequestDispatcher rd = request.getRequestDispatcher("customerindex.jsp");
-			rd.forward(request, response);
-		}
-	}
-
 	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		PrintWriter writer = response.getWriter();
 		HttpSession session = request.getSession(true);

@@ -16,7 +16,7 @@ public class UserDAO {
 	,updateUserSql = "update user set username=?,email=? where id = ?"
 	,deleteUserRoleSql = "delete from user_role where user_id = ?"
 	,deleteUserSql = "delete from user where id = ?"
-	,selectUserSql = "select * from	users where id = ?"
+	,selectUserSql = "select * from	user where id = ?"
 	,selectAllUserSql = "select * from user"
 	,selectAllUserByRoleKeySql = "select u.email,u.username,u.password,u.id,u.isactive from user u where exists (select 1 from user_role ur inner join role r on r.id = ur.role_id and r.key = ? and ur.user_id = u.id and  r.isactive = 1) and u.isactive = 1;"
 	,selectUserByNameAndPass = "select u.email,u.username,u.password,u.id,u.isactive from user u where u.username = ? and u.password = ? and exists (select 1 from user_role ur inner join role r on r.id = ur.role_id and r.key = ? and r.isactive = 1 and ur.user_id = u.id) and u.isactive = 1;"
@@ -138,9 +138,9 @@ public class UserDAO {
 		statement.setInt(1,id);
 		ResultSet result = statement.executeQuery();
 		while(result.next()) {
-			user.setUserId(result.getInt(1));
-			user.setUserName(result.getString(2));
-			user.setUserEmail(result.getString(3));
+			user.setUserId(Integer.parseInt(result.getObject("id").toString()));
+			user.setUserName(result.getObject("username").toString());
+			user.setUserEmail(result.getObject("email").toString());
 		}
 		return user;
 	}	
