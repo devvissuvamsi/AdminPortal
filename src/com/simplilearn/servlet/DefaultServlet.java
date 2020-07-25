@@ -43,6 +43,10 @@ public class DefaultServlet extends HttpServlet {
 			case "/customer.create":
 				userCreate(request,response);
 				break;
+			case "/user.delete":
+			case "/customer.delete":
+				userDelete(request,response);
+				break;					
 			case "/user.view":
 				userView(request,response);
 				break;					
@@ -105,9 +109,9 @@ public class DefaultServlet extends HttpServlet {
 			int id = Integer.parseInt(request.getParameter("id"));
 			if(userDAO.deleteUser(id))
 				if(isCustomer) {
-					response.sendRedirect("/customer.index");
+					response.sendRedirect("customer.index");
 				}else {
-					response.sendRedirect("/user.index");
+					response.sendRedirect("user.index");
 				}
 			else
 				System.out.println("There is some error in deleting user");
@@ -135,7 +139,7 @@ public class DefaultServlet extends HttpServlet {
 				String name = request.getParameter("name");
 				String email = request.getParameter("email");
 				User newUser = new User(name, email,"Password1");
-				userDAO.insertUser(newUser);
+				userDAO.insertUser(newUser,roleKey);
 				response.sendRedirect(roleKey+".index");				
 			}
 			else {

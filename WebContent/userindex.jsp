@@ -6,6 +6,8 @@
 	String createButtonLabel = request.getAttribute("createButtonLabel").toString();
 	String gridTitle = request.getAttribute("gridTitle").toString();
 	String uri = "/" + request.getAttribute("title").toString() + ".create";
+	String uriDelete = request.getAttribute("title").toString().toLowerCase() + ".delete";
+	String uriEdit = request.getAttribute("title").toString().toLowerCase() + ".edit";
 %>
 <div class="container">
 	<br />
@@ -33,8 +35,8 @@
 					<td><c:out value="${user.userName}"></c:out></td>
 					<td><c:out value="${user.userEmail}"></c:out></td>
 					<td>
-						<a href="user.edit?id=<c:out value='${user.userId}'/>" class="btn btn-secondary">Edit</a>
-						<a href="user.delete?id=<c:out value='${user.userId}'/>" class="btn btn-danger">Delete</a>
+						<a href="<%=uriEdit %>?id=<c:out value='${user.userId}'/>" class="btn btn-secondary">Edit</a>
+						<a href="<%=uriDelete %>?id=<c:out value='${user.userId}'/>" class="btn btn-danger">Delete</a>
 					</td>
 				</tr>
 			</c:forEach>

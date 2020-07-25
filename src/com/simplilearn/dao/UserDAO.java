@@ -14,6 +14,7 @@ public class UserDAO {
 	insertUserSql = "insert into user(username,email,password) values(?,?,?)"
 	,insertUserRoleSql = "insert into user_role(user_id,role_id) values(?,?)"
 	,updateUserSql = "update user set username=?,email=? where id = ?"
+	,deleteUserRoleSql = "delete from user_role where user_id = ?"
 	,deleteUserSql = "delete from user where id = ?"
 	,selectUserSql = "select * from	users where id = ?"
 	,selectAllUserSql = "select * from user"
@@ -47,7 +48,7 @@ public class UserDAO {
 		return userlocal;
 	}
 
-	public void insertUser(User user) throws SQLException {
+	public void insertUser(User user,String roleKey) throws SQLException {
 		conn = dbConnSingleton.getStoredMySqlConnection();
 		PreparedStatement statement = conn.prepareStatement(insertUserSql);
 		statement.setString(1,user.getUserName());
@@ -55,11 +56,16 @@ public class UserDAO {
 		statement.setString(3,user.getUserPass());
 		statement.executeUpdate();
 		
-		User userObj = findUserByName(user.getUserName(),"user");
+		User userObj = findUserByName(user.getUserName(),roleKey);
 
 		PreparedStatement userRoleStatement = conn.prepareStatement(insertUserRoleSql);
 		userRoleStatement.setInt(1,userObj.getUserId());
-		userRoleStatement.setInt(2,2);
+		if(roleKey.equalsIgnoreCase("user")) {
+			userRoleStatement.setInt(2,2);
+		}
+		else {
+			userRoleStatement.setInt(2,3);
+		}
 		userRoleStatement.executeUpdate();
 		
 		conn.close();
@@ -78,9 +84,15 @@ public class UserDAO {
 
 	public boolean deleteUser(int id) throws SQLException {
 		conn = dbConnSingleton.getStoredMySqlConnection();
-		PreparedStatement statement = conn.prepareStatement(deleteUserSql);
+		
+		PreparedStatement statement = conn.prepareStatement(deleteUserRoleSql);
 		statement.setInt(1,id);
-		boolean result = statement.executeUpdate() > 0;
+		statement.executeUpdate();
+
+		PreparedStatement userStatement = conn.prepareStatement(deleteUserSql);
+		userStatement.setInt(1,id);
+		
+		boolean result = userStatement.executeUpdate() > 0;
 		conn.close();
 		return result;
 	}
