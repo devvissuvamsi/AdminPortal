@@ -23,6 +23,12 @@ public class User {
 		this.userName = userName;
 		this.userPass = userPass;
 	}
+	public User(String userName, String email,String userPass) {
+		super();
+		this.userName = userName;
+		this.userEmail = email;
+		this.userPass = userPass;
+	}	
 	public int getUserId() {
 		return userId;
 	}

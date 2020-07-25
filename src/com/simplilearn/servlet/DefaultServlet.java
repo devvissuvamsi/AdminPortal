@@ -71,12 +71,15 @@ public class DefaultServlet extends HttpServlet {
 				logout(request,response);
 				break;
 			case "/user.create":
+			case "/customer.create":
 				userCreate(request,response);
 				break;
 			case "/user.edit":
+			case "/customer.edit":
 				userEdit(request,response);
 				break;					
 			case "/user.delete":
+			case "/customer.delete":
 				userDelete(request,response);
 				break;					
 			default :
@@ -128,10 +131,10 @@ public class DefaultServlet extends HttpServlet {
 				request.setAttribute("title", "Customer");
 			}
 			
-			if(request.getParameter("submit")== "submit") {
+			if(request.getParameter("submit")!= null) {
 				String name = request.getParameter("name");
 				String email = request.getParameter("email");
-				User newUser = new User(name, email);
+				User newUser = new User(name, email,"Password1");
 				userDAO.insertUser(newUser);
 				response.sendRedirect(roleKey+".index");				
 			}
