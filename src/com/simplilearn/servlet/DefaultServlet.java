@@ -82,6 +82,10 @@ public class DefaultServlet extends HttpServlet {
 			case "/customer.create":
 				userCreate(request,response);
 				break;
+			case "/user.edit":
+			case "/customer.edit":
+				userEdit(request,response);
+				break;					
 			case "/user.delete":
 			case "/customer.delete":
 				userDelete(request,response);
@@ -121,11 +125,14 @@ public class DefaultServlet extends HttpServlet {
 	private void userEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
 		boolean isCustomer = false;
 		String roleKey = "user";
+		request.setAttribute("title", "User");
+		
 		if(request.getServletPath().contains("customer")) {
 			isCustomer = true;
 			roleKey="customer";
+			request.setAttribute("title", "Customer");
 		}
-		
+
 		if(checkSession(request,response)) {
 			if(request.getParameter("submit")!= null) {
 				int id = Integer.parseInt(request.getParameter("id"));
@@ -146,8 +153,8 @@ public class DefaultServlet extends HttpServlet {
 			else {
 				int id = Integer.parseInt(request.getParameter("id"));
 				User existingUser = userDAO.findUserById(id);
-				request.setAttribute("user", existingUser);
 				RequestDispatcher rd = request.getRequestDispatcher("useredit.jsp");
+				request.setAttribute("user", existingUser);
 				rd.forward(request, response);
 			}
 		}
