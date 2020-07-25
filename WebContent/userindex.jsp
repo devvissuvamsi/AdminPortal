@@ -5,13 +5,14 @@
 <%
 	String createButtonLabel = request.getAttribute("createButtonLabel").toString();
 	String gridTitle = request.getAttribute("gridTitle").toString();
+	String uri = "/" + request.getAttribute("title").toString() + ".create";
 %>
 <div class="container">
 	<br />
 	<br />
 	<table class="table">
 		<tr>
-			<th><a href="<%=request.getContextPath()%>/user.create"	class="btn btn-success">${createButtonLabel}</a></th>
+			<th><a href="<%=request.getContextPath()%><%=uri %>"	class="btn btn-success">${createButtonLabel}</a></th>
 		</tr>
 	</table>
 		

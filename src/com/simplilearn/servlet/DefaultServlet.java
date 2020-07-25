@@ -40,6 +40,7 @@ public class DefaultServlet extends HttpServlet {
 				userIndex(request,response);
 				break;
 			case "/user.create":
+			case "/customer.create":
 				userCreate(request,response);
 				break;
 			case "/user.view":
@@ -88,9 +89,26 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 
-	private void userDelete(HttpServletRequest request, HttpServletResponse response) {
-		// TODO Auto-generated method stub
-		
+	private void userDelete(HttpServletRequest request, HttpServletResponse response) throws NumberFormatException, ServletException, IOException, SQLException {
+		if(checkSession(request,response)) {
+
+			boolean isCustomer = false;
+			String roleKey = "user";
+			if(request.getServletPath().contains("customer")) {
+				isCustomer = true;
+				roleKey="customer";
+			}
+			
+			int id = Integer.parseInt(request.getParameter("id"));
+			if(userDAO.deleteUser(id))
+				if(isCustomer) {
+					response.sendRedirect("/customer.index");
+				}else {
+					response.sendRedirect("/user.index");
+				}
+			else
+				System.out.println("There is some error in deleting user");
+		}
 	}
 
 	private void userEdit(HttpServletRequest request, HttpServletResponse response) {
@@ -98,12 +116,33 @@ public class DefaultServlet extends HttpServlet {
 		
 	}
 
-	private void userCreate(HttpServletRequest request, HttpServletResponse response) {
-		
+	private void userCreate(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
+		if(checkSession(request,response)) {
+			boolean isCustomer = false;
+			String roleKey = "user";
+			request.setAttribute("title", "User");
+			
+			if(request.getServletPath().contains("customer")) {
+				isCustomer = true;
+				roleKey="customer";
+				request.setAttribute("title", "Customer");
+			}
+			
+			if(request.getParameter("submit")== "submit") {
+				String name = request.getParameter("name");
+				String email = request.getParameter("email");
+				User newUser = new User(name, email);
+				userDAO.insertUser(newUser);
+				response.sendRedirect(roleKey+".index");				
+			}
+			else {
+				RequestDispatcher rd = request.getRequestDispatcher("usercreate.jsp");
+				rd.forward(request, response);
+			}
+		}
 	}
 
 	private void userIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-		System.out.println(request.getServletPath());
 		if(checkSession(request,response)) {
 			boolean isCustomer = false;
 			String roleKey = "user";
@@ -117,9 +156,11 @@ public class DefaultServlet extends HttpServlet {
 			request.setAttribute("listUser", userList);
 			request.setAttribute("createButtonLabel", "Create User");
 			request.setAttribute("gridTitle", "User List");
+			request.setAttribute("title", "user");
 			if(isCustomer) {
 				request.setAttribute("createButtonLabel", "Create Customer");
 				request.setAttribute("gridTitle", "Customer List");
+				request.setAttribute("title", "customer");
 			}
 			RequestDispatcher rd = request.getRequestDispatcher("userindex.jsp");
 			rd.forward(request, response);
