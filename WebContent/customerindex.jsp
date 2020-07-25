@@ -2,22 +2,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page errorPage = "/error" %>
 <!--  content begin -->
-<%
-	String createButtonLabel = request.getAttribute("createButtonLabel").toString();
-	String gridTitle = request.getAttribute("gridTitle").toString();
-%>
+
 <div class="container">
 	<br />
-	<br />
-	<table class="table">
-		<tr>
-			<th><a href="<%=request.getContextPath()%>/user.create"	class="btn btn-success">${createButtonLabel}</a></th>
-		</tr>
-	</table>
-		
+	<br /> <a href="<%=request.getContextPath()%>/customer.create"
+		class="btn btn-success">Create New User</a>
+	<h3>User List</h3>
 	<table class="table table-striped table-hover">
-		<caption>${gridTitle}</caption>
-		<thead class="thead-dark">
+		<thead>
 			<tr>
 				<th>Id</th>
 				<th>Name</th>
@@ -32,8 +24,8 @@
 					<td><c:out value="${user.userName}"></c:out></td>
 					<td><c:out value="${user.userEmail}"></c:out></td>
 					<td>
-						<a href="user.edit?id=<c:out value='${user.userId}'/>" class="btn btn-secondary">Edit</a>
-						<a href="user.delete?id=<c:out value='${user.userId}'/>" class="btn btn-danger">Delete</a>
+						<a href="customer.edit?id=<c:out value='${user.userId}'/>" class="btn btn-secondary">Edit</a>
+						<a href="customer.delete?id=<c:out value='${user.userId}'/>" class="btn btn-danger">Delete</a>
 					</td>
 				</tr>
 			</c:forEach>

@@ -36,8 +36,15 @@ public class DefaultServlet extends HttpServlet {
 				about(request,response);
 				break;
 			case "/user.index":
+			case "/customer.index":
 				userIndex(request,response);
 				break;
+			case "/user.create":
+				userCreate(request,response);
+				break;
+			case "/user.view":
+				userView(request,response);
+				break;					
 			default :
 				home(request,response);
 				break;
@@ -48,13 +55,8 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 	
-
-
-	private void userIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
-		List<User> userList = userDAO.selectAllUser();
-		request.setAttribute("listUser", userList);
-		RequestDispatcher rd = request.getRequestDispatcher("userindex.jsp");
-		rd.forward(request, response);
+	private void userView(HttpServletRequest request, HttpServletResponse response) {
+		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -67,9 +69,15 @@ public class DefaultServlet extends HttpServlet {
 			case "/logout":
 				logout(request,response);
 				break;
-			case "/customer.index":
-				customerIndex(request,response);
+			case "/user.create":
+				userCreate(request,response);
 				break;
+			case "/user.edit":
+				userEdit(request,response);
+				break;					
+			case "/user.delete":
+				userDelete(request,response);
+				break;					
 			default :
 				home(request,response);
 				break;
@@ -80,10 +88,51 @@ public class DefaultServlet extends HttpServlet {
 		}
 	}
 
-
-	private void customerIndex(HttpServletRequest request, HttpServletResponse response) {
+	private void userDelete(HttpServletRequest request, HttpServletResponse response) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	private void userEdit(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void userCreate(HttpServletRequest request, HttpServletResponse response) {
+		
+	}
+
+	private void userIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+		System.out.println(request.getServletPath());
+		if(checkSession(request,response)) {
+			boolean isCustomer = false;
+			String roleKey = "user";
+			
+			if(request.getServletPath().contains("customer")) {
+				isCustomer = true;
+				roleKey="customer";
+			}
+			
+			List<User> userList = userDAO.selectAllUser(roleKey);
+			request.setAttribute("listUser", userList);
+			request.setAttribute("createButtonLabel", "Create User");
+			request.setAttribute("gridTitle", "User List");
+			if(isCustomer) {
+				request.setAttribute("createButtonLabel", "Create Customer");
+				request.setAttribute("gridTitle", "Customer List");
+			}
+			RequestDispatcher rd = request.getRequestDispatcher("userindex.jsp");
+			rd.forward(request, response);
+		}
+	}
+	
+	private void customerIndex(HttpServletRequest request, HttpServletResponse response) throws SQLException, ServletException, IOException {
+		if(checkSession(request,response)) {
+			List<User> userList = userDAO.selectAllUser();
+			request.setAttribute("listUser", userList);
+			RequestDispatcher rd = request.getRequestDispatcher("customerindex.jsp");
+			rd.forward(request, response);
+		}
 	}
 
 	private void logout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -139,29 +188,16 @@ public class DefaultServlet extends HttpServlet {
 	}
 
 	private void about(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// It will look for existing session variables by passing true as argument
-		HttpSession session = request.getSession(true);
-		
-		if(session!=null) {
+		if(checkSession(request,response)) {
 			RequestDispatcher rd = request.getRequestDispatcher("about.jsp");
 			rd.include(request, response);
 		}
-		else {
-			request.setAttribute("sessionExpired", true);
-			request.getRequestDispatcher("logout").include(request, response);
-		}		
 	}
 
 	private void home(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// It will look for existing session variables by passing true as argument
-		HttpSession session = request.getSession(true);
-		
-		if(session!=null) {
+		if(checkSession(request,response)) {
 			RequestDispatcher rd = request.getRequestDispatcher("home.jsp");
 			rd.include(request, response);
-		}
-		else {
-			request.getRequestDispatcher("logout").include(request, response);
 		}
 	}
 
@@ -170,6 +206,19 @@ public class DefaultServlet extends HttpServlet {
 		String email = request.getParameter("userpass");
 		User newUser = new User(name, email);
 		return this.userDAO.findUser(newUser);
+	}
+	
+	private boolean checkSession(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		boolean sessionValid = false;
+		HttpSession session = request.getSession(true);
+		
+		if(session!=null) {
+			sessionValid = true;
+		}
+		else {
+			request.getRequestDispatcher("logout").include(request, response);
+		}
+		return sessionValid;		
 	}
 
 }

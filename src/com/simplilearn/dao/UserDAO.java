@@ -16,7 +16,8 @@ public class UserDAO {
 	,deleteUserSql = "delete from user where id = ?"
 	,selectUserSql = "select * from	users where id = ?"
 	,selectAllUserSql = "select * from user"
-	,selectUserByNameAndPass = "select * from user where username = ? and password = ?";
+	,selectAllUserByRoleKeySql = "select u.email,u.username,u.password,u.id,u.isactive from user u where exists (select 1 from user_role ur inner join role r on r.id = ur.role_id and r.key = ? and ur.user_id = u.id and  r.isactive = 1) and u.isactive = 1;"
+	,selectUserByNameAndPass = "select u.email,u.username,u.password,u.id,u.isactive from user u where u.username = ? and u.password = ? and exists (select 1 from user_role ur inner join role r on r.id = ur.role_id and r.key = ? and r.isactive = 1 and ur.user_id = u.id) and u.isactive = 1;";
 	
 	private DbConnSingleton dbConnSingleton = DbConnSingleton.getInstance();
 	private Connection conn;
@@ -32,13 +33,13 @@ public class UserDAO {
 		PreparedStatement statement = this.conn.prepareStatement(selectUserByNameAndPass);
 		statement.setString(1,user.getUserName());
 		statement.setString(2,user.getUserPass());
+		statement.setString(3,"admin");
 		
 		ResultSet result = statement.executeQuery();
 		while(result.next()) {
-			userlocal.setUserId(result.getInt(1));
-			userlocal.setUserName(result.getString(2));
-			userlocal.setUserPass(result.getString(3));
-			userlocal.setUserEmail(result.getString(4));
+			userlocal.setUserId(Integer.parseInt(result.getObject("id").toString()));
+			userlocal.setUserName(result.getObject("username").toString());
+			userlocal.setUserEmail(result.getObject("email").toString());
 		}
 		this.conn.close();
 		return userlocal;
@@ -81,14 +82,31 @@ public class UserDAO {
 		ResultSet result = statement.executeQuery();
 		while(result.next()) {
 			User user = new User();
-			user.setUserId(result.getInt(1));
-			user.setUserName(result.getString(2));
-			user.setUserEmail(result.getString(3));
+			user.setUserId(Integer.parseInt(result.getObject("id").toString()));
+			user.setUserName(result.getObject("username").toString());
+			user.setUserEmail(result.getObject("email").toString());
 			userList.add(user);
 		}
 		return userList;
 	}
 
+	public List<User> selectAllUser(String roleKey) throws SQLException {
+		List<User> userList = new ArrayList<User>();
+		
+		conn = dbConnSingleton.getStoredMySqlConnection();
+		PreparedStatement statement = conn.prepareStatement(selectAllUserByRoleKeySql);
+		statement.setString(1,roleKey);
+		ResultSet result = statement.executeQuery();
+		while(result.next()) {
+			User user = new User();
+			user.setUserId(Integer.parseInt(result.getObject("id").toString()));
+			user.setUserName(result.getObject("username").toString());
+			user.setUserEmail(result.getObject("email").toString());
+			userList.add(user);
+		}
+		return userList;
+	}
+	
 	public User findUserById(int id) throws SQLException {
 		User user = new User();
 		
