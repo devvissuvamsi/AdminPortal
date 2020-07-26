@@ -1,7 +1,13 @@
-<jsp:include page="header.jsp"></jsp:include>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page errorPage="/error"%>
+<jsp:include page="header.jsp"></jsp:include>
+<%
+    session=request.getSession(false);
+    if(session.getAttribute("username")==null)
+    {
+        response.sendRedirect(request.getContextPath()+"/login.html");
+    }
+%>
 <%
 	String title = request.getAttribute("title").toString();
 	String uri = "/" + title.toLowerCase() + ".edit";

@@ -1,7 +1,14 @@
-<jsp:include page="header.jsp"></jsp:include>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page errorPage = "/error" %>
-<!--  content begin -->
+<%@ page errorPage="/error"%>
+
+<jsp:include page="header.jsp"></jsp:include>
+<%
+    session=request.getSession(false);
+    if(session.getAttribute("username")==null)
+    {
+        response.sendRedirect(request.getContextPath()+"/login.html");
+    }
+%>
 <%
 	String createButtonLabel = request.getAttribute("createButtonLabel").toString();
 	String gridTitle = request.getAttribute("gridTitle").toString();
@@ -9,6 +16,8 @@
 	String uriDelete = request.getAttribute("title").toString().toLowerCase() + ".delete";
 	String uriEdit = request.getAttribute("title").toString().toLowerCase() + ".edit";
 %>
+
+<!--  content begin -->
 <div class="container">
 	<br />
 	<br />
