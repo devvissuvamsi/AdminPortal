@@ -19,6 +19,29 @@ if(cookies !=null){
 }else{
 	sessionID = session.getId();
 }
+
+String activeClassHome="active",activeClassUser="",activeClassCustomer="",activeClassAbout="";
+
+try{
+	switch(request.getAttribute("title").toString().toLowerCase()){
+	case "user":
+		activeClassUser="active";
+		break;
+	case "customer":
+		activeClassCustomer="active";
+		break;
+	default :
+		activeClassHome="active";
+		break;
+	}	
+}
+catch(Exception e){
+	if(request.getServletPath().toString().toLowerCase().contains("about")){
+		activeClassAbout="active";
+	}
+}
+
+
 %>
 <div class="container">
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -36,14 +59,14 @@ if(cookies !=null){
 
 		<div class="collapse navbar-collapse" id="navbarSupportedContent">
 			<ul class="navbar-nav mr-auto">
-				<li class="nav-item active"><a class="nav-link" href="<%=request.getContextPath()%>/home">Home
+				<li class="nav-item <%=activeClassHome%>"><a class="nav-link" href="<%=request.getContextPath()%>/home">Home
 						<span class="sr-only">(current)</span>
 				</a></li>
-				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/user.index">Manage
+				<li class="nav-item <%=activeClassUser%>"><a class="nav-link" href="<%=request.getContextPath()%>/user.index">Manage
 						User</a></li>
-				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/customer.index">Manage
+				<li class="nav-item <%=activeClassCustomer%>"><a class="nav-link" href="<%=request.getContextPath()%>/customer.index">Manage
 						Customer</a></li>
-				<li class="nav-item"><a class="nav-link" href="<%=request.getContextPath()%>/about">About</a></li>
+				<li class="nav-item <%=activeClassAbout%>"><a class="nav-link" href="<%=request.getContextPath()%>/about">About</a></li>
 			</ul>
 			<form class="form-inline my-2 my-lg-0" action="logout" name="logout" method="post">
 				<button class="btn btn-outline-success my-2 my-sm-0" type="submit"
